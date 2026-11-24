@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra Digital Interactiva - Mensajes que leo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        montanoAzul: '#1269A8',
+                        montanoAmarillo: '#F7D615',
+                        montanoVerdeGris: '#54887D',
+                        montanoAzulClaro: '#88B5C7',
+                        montanoVerdeOliva: '#A6B046',
+                        montanoFondo: '#F2F5E9'
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .pizarra-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(18, 105, 168, 0.08);
+            border: 2px solid #88B5C7;
+        }
+        .tab-btn.active {
+            background-color: #1269A8;
+            color: #ffffff;
+            border-color: #1269A8;
+            font-weight: bold;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-montanoFondo text-gray-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- ENCABEZADO Y BARRA SUPERIOR -->
+    <header class="bg-montanoAzul text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <!-- Logo e Identidad -->
+            <div class="flex items-center gap-3">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEop0yf6lZ7Jk9MILZxF1rBj4Oqs5esyhIQ&s" 
+                     alt="Colegio Montano Logo" 
+                     class="h-12 w-12 object-contain bg-white rounded-full p-1 border-2 border-montanoAmarillo"
+                     onerror="this.src='https://placehold.co/100x100/1269A8/FFFFFF?text=Montano'">
+                <div>
+                    <h1 class="text-xl font-bold text-montanoAmarillo leading-tight">COLEGIO MONTANO</h1>
+                    <p class="text-xs text-montanoAzulClaro font-medium">Pizarra Digital Interactiva - Plan Diario</p>
+                </div>
+            </div>
+
+            <!-- Ficha Técnica Rápida -->
+            <div class="text-xs sm:text-sm bg-white/10 px-4 py-2 rounded-lg border border-white/20 flex flex-wrap gap-x-4 gap-y-1">
+                <span><strong class="text-montanoAmarillo">Curso:</strong> Comunicación y Lenguaje</span>
+                <span><strong class="text-montanoAmarillo">Grado:</strong> 4to Primaria</span>
+                <span><strong class="text-montanoAmarillo">Unidad:</strong> Unidad 1</span>
+                <span><strong class="text-montanoAmarillo">Docente:</strong> Andrea Aguilar</span>
+                <span><strong class="text-montanoAmarillo">Tiempo:</strong> 50 min</span>
+                <span><strong class="text-montanoAmarillo">Fecha:</strong> Enero 2027</span>
+            </div>
+
+            <!-- Botón Pantalla Completa -->
+            <button onclick="toggleFullScreen()" 
+                    class="bg-montanoAmarillo hover:bg-yellow-400 text-montanoAzul font-bold px-3 py-2 rounded-lg shadow flex items-center gap-2 text-sm transition-all duration-200 active:scale-95">
+                <i class="fa-solid font-bold fa-expand"></i>
+                <span class="hidden md:inline">Pantalla Completa</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- METADATOS PEDAGÓGICOS Y HÁBITOS MONTANO -->
+    <section class="max-w-7xl mx-auto px-4 my-4 w-full">
+        <div class="bg-white rounded-xl p-4 shadow-sm border-l-4 border-montanoVerdeGris">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                <!-- Competencia & Logro -->
+                <div class="space-y-1">
+                    <span class="font-bold text-montanoAzul flex items-center gap-1">
+                        <i class="fa-solid fa-bullseye text-montanoVerdeGris"></i> Competencia CNB & Logro
+                    </span>
+                    <p class="text-gray-600">
+                        <strong>CNB:</strong> Lee con sentido crítico textos continuos y discontinuos (afiches, rótulos, símbolos) para extraer e interpretar información explícita e implícita.
+                    </p>
+                    <p class="text-gray-600">
+                        <strong>Logro:</strong> Identifica el propósito, emisor e intención comunicativa de distintos mensajes escritos y gráficos del entorno cotidiano.
+                    </p>
+                </div>
+
+                <!-- Competencias Clave -->
+                <div class="space-y-1">
+                    <span class="font-bold text-montanoAzul flex items-center gap-1">
+                        <i class="fa-solid fa-brain text-montanoVerdeGris"></i> Competencias Clave
+                    </span>
+                    <div class="flex flex-wrap gap-1 pt-1">
+                        <span class="bg-montanoAzulClaro/20 text-montanoAzul font-semibold px-2 py-0.5 rounded text-xs">Comprensión Lectora</span>
+                        <span class="bg-montanoAzulClaro/20 text-montanoAzul font-semibold px-2 py-0.5 rounded text-xs">Pensamiento Crítico</span>
+                        <span class="bg-montanoAzulClaro/20 text-montanoAzul font-semibold px-2 py-0.5 rounded text-xs">Interpretación Visual</span>
+                    </div>
+                </div>
+
+                <!-- Hábitos Montano -->
+                <div class="space-y-1">
+                    <span class="font-bold text-montanoAzul flex items-center gap-1">
+                        <i class="fa-solid fa-star text-montanoAmarillo"></i> Hábitos Montano Integrados
+                    </span>
+                    <ul class="list-disc list-inside text-gray-600">
+                        <li><strong class="text-montanoVerdeOliva">Hábito 2:</strong> Comenzar con un fin en mente (Leer identificando la intención previa del autor).</li>
+                        <li><strong class="text-montanoVerdeOliva">Hábito 5:</strong> Buscar primero entender, luego ser entendido (Analizar antes de juzgar un texto).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NAVEGACIÓN DE PESTAÑAS (SECUENCIA DIDÁCTICA DE 50 MIN) -->
+    <main class="max-w-7xl mx-auto px-4 mb-6 flex-grow w-full">
+        <!-- Tabs Nav -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+            <button onclick="openTab('tab1')" id="btn-tab1" 
+                    class="tab-btn active bg-white border-2 border-montanoAzulClaro text-montanoAzul p-3 rounded-lg flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-eye"></i>
+                <div class="text-left">
+                    <div class="text-xs font-normal">Inicio (~5 min)</div>
+                    <div class="font-bold text-sm">I. Motivación</div>
+                </div>
+            </button>
+            <button onclick="openTab('tab2')" id="btn-tab2" 
+                    class="tab-btn bg-white border-2 border-montanoAzulClaro text-montanoAzul p-3 rounded-lg flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-book-open-reader"></i>
+                <div class="text-left">
+                    <div class="text-xs font-normal">Individual (20 min)</div>
+                    <div class="font-bold text-sm">II. Decodificador Lector</div>
+                </div>
+            </button>
+            <button onclick="openTab('tab3')" id="btn-tab3" 
+                    class="tab-btn bg-white border-2 border-montanoAzulClaro text-montanoAzul p-3 rounded-lg flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-layer-group"></i>
+                <div class="text-left">
+                    <div class="text-xs font-normal">Equipo (15 min)</div>
+                    <div class="font-bold text-sm">III. Taller Detectives</div>
+                </div>
+            </button>
+            <button onclick="openTab('tab4')" id="btn-tab4" 
+                    class="tab-btn bg-white border-2 border-montanoAzulClaro text-montanoAzul p-3 rounded-lg flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <div class="text-left">
+                    <div class="text-xs font-normal">Cierre (10 min)</div>
+                    <div class="font-bold text-sm">IV. Trivia & Rúbrica</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- CONTENIDO DE LAS PESTAÑAS -->
+
+        <!-- PESTAÑA I: INTRODUCCIÓN MOTIVANTE -->
+        <div id="tab1" class="tab-content pizarra-card p-6">
+            <div class="flex items-center gap-3 mb-4 border-b border-gray-200 pb-3">
+                <div class="bg-montanoAmarillo p-3 rounded-full text-montanoAzul font-bold">
+                    <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-montanoAzul">Pestaña I: Motivación - Lectores del Entorno (~5 min)</h2>
+                    <p class="text-xs text-gray-500">Evaluación Diagnóstica / Activación de Saberes Previos</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Recreo Cerebral: "Rótulos Veloces" -->
+                <div class="bg-montanoFondo p-4 rounded-lg border border-montanoAzulClaro">
+                    <h3 class="font-bold text-montanoAzul mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-montanoVerdeGris"></i> Recreo Cerebral: "¿Qué me dice este cartel?"
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        El docente proyecta rápidamente estos 3 textos gráficos y los niños deben gritar su significado en 3 segundos:
+                    </p>
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-red-100 border-l-4 border-red-500 p-2 text-red-900 font-bold flex justify-between items-center">
+                            <span>"¡ALTO! CUIDADO CON EL PERRO"</span>
+                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                        </div>
+                        <div class="bg-amber-100 border-l-4 border-amber-500 p-2 text-amber-900 font-bold flex justify-between items-center">
+                            <span>"LIQUIDACIÓN 50% DESCUENTO SOLO HOY"</span>
+                            <i class="fa-solid fa-tags text-lg"></i>
+                        </div>
+                        <div class="bg-blue-100 border-l-4 border-blue-500 p-2 text-blue-900 font-bold flex justify-between items-center">
+                            <span>"ZONA DE SILENCIO - BIBLIOTECA"</span>
+                            <i class="fa-solid fa-volume-xmark text-lg"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 bg-white p-3 rounded border text-xs text-montanoVerdeGris font-semibold">
+                        <i class="fa-solid fa-circle-question"></i> Pregunta Clave: "¿Leemos solo libros o también leemos todo lo que nos rodea?"
+                    </div>
+                </div>
+
+                <!-- Conexión Teórica Breve -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200">
+                    <h3 class="font-bold text-montanoAzul mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-book text-montanoVerdeOliva"></i> Conceptos Clave del Tema
+                    </h3>
+                    <div class="p-3 bg-montanoAzulClaro/10 rounded-lg border-l-4 border-montanoAzul text-sm text-gray-700 space-y-3">
+                        <div>
+                            <p class="font-bold text-montanoAzul">📜 Mensajes Informativos:</p>
+                            <p class="text-xs">Transmiten datos reales u orientaciones directas (noticias, letreros de tránsito, avisos escolares).</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-montanoAzul">📢 Mensajes Persuasivos (Publicitarios):</p>
+                            <p class="text-xs">Buscan convencer al lector de realizar una acción o comprar un producto usando colores vivos y palabras llamativas.</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-montanoAzul">⚠️ Mensajes Normativos/Preventivos:</p>
+                            <p class="text-xs">Establecen reglas o advierten riesgos para mantener la seguridad comunitaria.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PESTAÑA II: TRABAJO INDIVIDUAL -->
+        <div id="tab2" class="tab-content pizarra-card p-6 hidden">
+            <div class="flex items-center gap-3 mb-4 border-b border-gray-200 pb-3">
+                <div class="bg-montanoAzul p-3 rounded-full text-white font-bold">
+                    <i class="fa-solid fa-user-pen text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-montanoAzul">Pestaña II: Trabajo Individual - Decodificador Lector (20 min)</h2>
+                    <p class="text-xs text-gray-500">Evaluación Formativa - Análisis Específico de Textos en Cuaderno</p>
+                </div>
+            </div>
+
+            <!-- Instrucción del Ejercicio -->
+            <div class="bg-montanoFondo p-4 rounded-lg mb-6 border border-montanoAzulClaro">
+                <p class="text-sm text-gray-700">
+                    <strong>Desafío de Análisis Lectores:</strong> Lee los siguientes 2 mensajes que encontramos en nuestra vida diaria. Responde las preguntas en tu cuaderno y despliega las respuestas para autoevaluar tu trabajo.
+                </p>
+            </div>
+
+            <!-- Situaciones didácticas con acordeones desplegables -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Texto 1 -->
+                <div class="bg-white p-4 rounded-lg border-2 border-montanoAzulClaro shadow-sm">
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded">Texto A: Afiche Escolar</span>
+                    <div class="bg-gray-50 p-3 rounded mt-2 border text-xs italic text-gray-800">
+                        <p class="font-bold text-montanoAzul not-italic">" Gran Campaña de Reciclaje Colegio Montano "</p>
+                        <p class="mt-1">Trae tus botellas plásticas este viernes al patio central. ¡Ayuda a salvar el planeta y gana puntos para tu equipo!</p>
+                    </div>
+                    
+                    <p class="text-xs text-gray-600 font-semibold mt-3">Pregunta: ¿Cuál es la intención del emisor y qué acción se espera del lector?</p>
+
+                    <!-- Desplegable Oculto -->
+                    <button onclick="toggleAccordion('acc-t1')" class="w-full mt-3 bg-montanoAzulClaro/20 hover:bg-montanoAzulClaro/30 text-montanoAzul font-semibold py-2 px-3 rounded flex justify-between items-center text-xs transition">
+                        <span><i class="fa-solid fa-eye mr-1"></i> Desplegar Solución / Pauta</span>
+                        <i class="fa-solid fa-chevron-down" id="icon-acc-t1"></i>
+                    </button>
+                    <div id="acc-t1" class="accordion-content bg-gray-50 rounded p-3 mt-2 text-xs text-gray-700">
+                        <p class="font-bold text-green-700">Respuesta Sugerida:</p>
+                        <p class="italic"><strong>Intención:</strong> Persuadir y motivar al cuidado ambiental. <strong>Acción esperada:</strong> Que los estudiantes lleven botellas plásticas el viernes.</p>
+                    </div>
+                </div>
+
+                <!-- Texto 2 -->
+                <div class="bg-white p-4 rounded-lg border-2 border-montanoAzulClaro shadow-sm">
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded">Texto B: Aviso Preventivo</span>
+                    <div class="bg-gray-50 p-3 rounded mt-2 border text-xs italic text-gray-800">
+                        <p class="font-bold text-red-600 not-italic">" ATENCIÓN: PISO MOJADO "</p>
+                        <p class="mt-1">Por favor, camine despacio por el pasillo derecho mientras el personal realiza la limpieza.</p>
+                    </div>
+
+                    <p class="text-xs text-gray-600 font-semibold mt-3">Pregunta: ¿Por qué este mensaje utiliza letras grandes y qué consecuencia evita?</p>
+                    
+                    <!-- Desplegable Oculto -->
+                    <button onclick="toggleAccordion('acc-t2')" class="w-full mt-3 bg-montanoAzulClaro/20 hover:bg-montanoAzulClaro/30 text-montanoAzul font-semibold py-2 px-3 rounded flex justify-between items-center text-xs transition">
+                        <span><i class="fa-solid fa-eye mr-1"></i> Desplegar Solución / Pauta</span>
+                        <i class="fa-solid fa-chevron-down" id="icon-acc-t2"></i>
+                    </button>
+                    <div id="acc-t2" class="accordion-content bg-gray-50 rounded p-3 mt-2 text-xs text-gray-700">
+                        <p class="font-bold text-green-700">Respuesta Sugerida:</p>
+                        <p class="italic"><strong>Letras grandes:</strong> Para llamar la atención rápida antes de caminar. <strong>Consecuencia que evita:</strong> Previene que alguien resbale y sufra un accidente (Aplica Hábito 1: Ser Proactivo).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejercicio escrito complementario -->
+            <div class="mt-6 bg-montanoAmarillo/10 p-4 rounded-lg border border-montanoAmarillo">
+                <h4 class="font-bold text-montanoAzul text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> Actividad en Cuaderno (Hábito 2 - Comenzar con un fin en mente):
+                </h4>
+                <p class="text-xs text-gray-700 mt-1">
+                    Diseña un pequeño aviso para tu salón de clases cuyo propósito sea recordar guardar el material al terminar la clase. Debe contener: 1) Título llamativo, 2) Texto breve e instructivo y 3) Un dibujo o símbolo.
+                </p>
+            </div>
+        </div>
+
+        <!-- PESTAÑA III: TRABAJO COOPERATIVO -->
+        <div id="tab3" class="tab-content pizarra-card p-6 hidden">
+            <div class="flex items-center gap-3 mb-4 border-b border-gray-200 pb-3">
+                <div class="bg-montanoVerdeGris p-3 rounded-full text-white font-bold">
+                    <i class="fa-solid fa-users text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-montanoAzul">Pestaña III: Taller Detectives del Lenguaje (15 min)</h2>
+                    <p class="text-xs text-gray-500">Trabajo Colaborativo en Parejas con Asignación de Roles</p>
+                </div>
+            </div>
+
+            <!-- Asignación de Roles -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-3 rounded-lg border border-montanoAzulClaro">
+                    <h4 class="font-bold text-montanoAzul text-xs uppercase tracking-wider mb-2">Estudiante 1: Analista Lector</h4>
+                    <p class="text-xs text-gray-600">Identifica quién escribió el mensaje (emisor) y a quién va dirigido (receptor).</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-montanoAzulClaro">
+                    <h4 class="font-bold text-montanoAzul text-xs uppercase tracking-wider mb-2">Estudiante 2: Diseñador / Relator</h4>
+                    <p class="text-xs text-gray-600">Completa la matriz de análisis y expone las conclusiones en la plenaria.</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-montanoAzulClaro">
+                    <h4 class="font-bold text-montanoAzul text-xs uppercase tracking-wider mb-2">Hábito Montano Integrado</h4>
+                    <p class="text-xs text-montanoVerdeGris font-semibold">Hábito 5: Buscar primero entender, luego ser entendido (Escucha atenta de las ideas del compañero).</p>
+                </div>
+            </div>
+
+            <!-- Matriz de Análisis en Parejas -->
+            <div class="bg-montanoFondo p-4 rounded-lg border border-gray-300">
+                <h3 class="font-bold text-montanoAzul text-sm mb-3">
+                    <i class="fa-solid fa-table-list text-montanoVerdeOliva"></i> Matriz: Descifrando Mensajes Reales del Colegio
+                </h3>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left text-gray-600 bg-white rounded-lg overflow-hidden shadow-sm">
+                        <thead class="bg-montanoAzul text-white">
+                            <tr>
+                                <th class="p-2.5">Mensaje Leído</th>
+                                <th class="p-2.5">¿Qué tipo de texto es?</th>
+                                <th class="p-2.5">Emisor probable</th>
+                                <th class="p-2.5">Acción que debe realizar el lector</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr>
+                                <td class="p-2.5 font-semibold text-gray-800">"Apagar las luces al salir de clase"</td>
+                                <td class="p-2.5 text-montanoAzul font-semibold">Normativo / Ahorro</td>
+                                <td class="p-2.5">Dirección / Maestro</td>
+                                <td class="p-2.5">Presionar el interruptor de luz antes de ir al recreo.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-semibold text-gray-800">"Menú saludable en la cafetería: Frutas $1.00"</td>
+                                <td class="p-2.5 text-montanoAzul font-semibold">Informativo / Publicitario</td>
+                                <td class="p-2.5">Cafetería escolar</td>
+                                <td class="p-2.5">Elegir una opción saludable de refacción.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-semibold text-gray-800">"Entrada exclusiva para estudiantes"</td>
+                                <td class="p-2.5 text-montanoAzul font-semibold">Preventivo / Regla</td>
+                                <td class="p-2.5">Seguridad del colegio</td>
+                                <td class="p-2.5">Ingresar respetando las filas asignadas.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PESTAÑA IV: PLENARIA Y TRIVIA INTERACTIVA -->
+        <div id="tab4" class="tab-content pizarra-card p-6 hidden">
+            <div class="flex items-center gap-3 mb-4 border-b border-gray-200 pb-3">
+                <div class="bg-montanoAmarillo p-3 rounded-full text-montanoAzul font-bold">
+                    <i class="fa-solid fa-gamepad text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-montanoAzul">Pestaña IV: Plenaria, Trivia y Evaluación (~10 min)</h2>
+                    <p class="text-xs text-gray-500">Evaluación Sumativa y Comprobación de Logros de Aprendizaje</p>
+                </div>
+            </div>
+
+            <!-- TRIVIA INTERACTIVA -->
+            <div class="bg-white p-5 rounded-xl border-2 border-montanoAzulClaro mb-6 shadow-sm">
+                <h3 class="font-bold text-montanoAzul text-base mb-2 flex items-center justify-between">
+                    <span><i class="fa-solid fa-circle-question text-montanoAmarillo"></i> Trivia Flash: "Mensajes que leo"</span>
+                    <span id="score" class="text-xs bg-montanoAzul text-white px-3 py-1 rounded-full font-bold">Puntos: 0</span>
+                </h3>
+
+                <div id="quiz-container" class="space-y-4">
+                    <p id="quiz-question" class="text-sm font-semibold text-gray-800">
+                        ¿Cuál es la función principal de un aviso que dice "PISO MOJADO - PRECAUCIÓN"?
+                    </p>
+                    <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="checkAnswer(false, this)" class="bg-montanoFondo hover:bg-montanoAzulClaro/20 text-gray-800 p-2.5 rounded-lg border border-gray-300 text-xs text-left font-medium">Vender un producto de limpieza para el piso.</button>
+                        <button onclick="checkAnswer(true, this)" class="bg-montanoFondo hover:bg-montanoAzulClaro/20 text-gray-800 p-2.5 rounded-lg border border-gray-300 text-xs text-left font-medium">Prevenir un accidente o caída alertando al peatón.</button>
+                    </div>
+                    <div id="quiz-feedback" class="hidden text-xs font-bold p-2 rounded mt-2"></div>
+                </div>
+            </div>
+
+            <!-- INSTRUMENTO DE EVALUACIÓN (LISTA DE COTEJO DE PLENARIA) -->
+            <div class="bg-montanoFondo p-4 rounded-xl border border-montanoAzulClaro">
+                <h3 class="font-bold text-montanoAzul text-sm mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-square-check text-montanoVerdeGris"></i> Lista de Cotejo - Evaluación de Plenaria y Taller
+                </h3>
+
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 bg-white p-2.5 rounded border border-gray-200 text-xs cursor-pointer hover:bg-gray-50">
+                        <input type="checkbox" class="w-4 h-4 text-montanoAzul rounded">
+                        <span>1. Identificación del propósito: Reconoce si el mensaje busca informar, prevenir o convencer.</span>
+                    </label>
+                    <label class="flex items-center gap-3 bg-white p-2.5 rounded border border-gray-200 text-xs cursor-pointer hover:bg-gray-50">
+                        <input type="checkbox" class="w-4 h-4 text-montanoAzul rounded">
+                        <span>2. Interpretación de elementos gráficos: Comprende la relación entre imágenes, colores y texto.</span>
+                    </label>
+                    <label class="flex items-center gap-3 bg-white p-2.5 rounded border border-gray-200 text-xs cursor-pointer hover:bg-gray-50">
+                        <input type="checkbox" class="w-4 h-4 text-montanoAzul rounded">
+                        <span>3. Trabajo colaborativo: Cumple con el rol asignado dentro de la pareja (Hábito 5).</span>
+                    </label>
+                    <label class="flex items-center gap-3 bg-white p-2.5 rounded border border-gray-200 text-xs cursor-pointer hover:bg-gray-50">
+                        <input type="checkbox" class="w-4 h-4 text-montanoAzul rounded">
+                        <span>4. Exposición y Claridad: Expresa con claridad las conclusiones durante la plenaria final.</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-montanoAzul text-white text-center py-2 text-xs border-t-2 border-montanoAmarillo">
+        <p>© 2027 Colegio Montano - Sistema de Planificación Digital e Interactiva en Pizarra</p>
+    </footer>
+
+    <!-- JAVASCRIPT DE INTERACTIVIDAD -->
+    <script>
+        // Función para cambiar de pestaña
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if(activeBtn) activeBtn.classList.add('active');
+        }
+
+        // Función para los desplegables (Acordeón)
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                if(icon) icon.className = "fa-solid fa-chevron-down";
+            } else {
+                content.classList.add('open');
+                if(icon) icon.className = "fa-solid fa-chevron-up";
+            }
+        }
+
+        // Función de Pantalla Completa
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Error intentando activar pantalla completa: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Lógica interactiva de Trivia Flash
+        let score = 0;
+        function checkAnswer(isCorrect, btnElement) {
+            const feedback = document.getElementById('quiz-feedback');
+            const scoreDisplay = document.getElementById('score');
+            
+            feedback.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            
+            if (isCorrect) {
+                score += 10;
+                scoreDisplay.innerText = `Puntos: ${score}`;
+                feedback.classList.add('bg-green-100', 'text-green-800');
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check"></i> ¡Excelente! Un letrero de prevención busca alertar a los lectores para evitar un riesgo.';
+                btnElement.classList.add('bg-green-200');
+            } else {
+                feedback.classList.add('bg-red-100', 'text-red-800');
+                feedback.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Revisa con atención: el objetivo no es vender, sino resguardar la seguridad de quien lee.';
+                btnElement.classList.add('bg-red-200');
+            }
+        }
+    </script>
+</body>
+</html>
